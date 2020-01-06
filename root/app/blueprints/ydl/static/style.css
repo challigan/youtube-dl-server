@@ -5,3 +5,8 @@ body {
 .container {
     height: 100vh;
 }
+
+input.largerCheckbox {
+    width: 40px;
+    height: 40px;
+}
