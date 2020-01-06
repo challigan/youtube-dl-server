@@ -65,7 +65,7 @@ var showtoast = new ToastBuilder(myOptions);
 // Attach a submit handler to the form
 function SubmitURL(url) {
   // Send the data using post
-  var posting = $.post( '/yt/q', { url: url } );
+  var posting = $.post( '/youtube-dl/q', { url: url } );
  
   // Put the results in a div
   posting.done(function( data ) {
@@ -84,32 +84,8 @@ function SubmitURL(url) {
 
 };
 
-// Attach a submit handler to the form
-function SubmitSearch(artist, title, album) {
-  // Send the data using post
-  var posting = $.get( '/yt/search', { artist: artist, title: title, album:album } );
- 
-  // Put the results in a div
-  posting.done(function( data ) {
-    if (data.success == true) {
-      showtoast("Link successfully retrieved");
-    }
-    else {
-      showtoast("Error: "+data.error);
-    }
-    $('#search-box').val('');
-  });
-
-  posting.error(function () {
-    showtoast("Error: POST to service failed");
-  });
-
-};
-
-
-
 // wire it up
-$('#url-btn').click(function() {
+$('#button-submit').click(function() {
   SubmitURL($('#url-box').val());
 });
 
