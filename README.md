@@ -19,17 +19,33 @@ services:
     container_name: ytb-dl
     image: wiserain/youtube-dl-server:latest
     restart: always
-    network_mode: bridge
+    networks:
+      - traefik_proxy
     ports:
-      - ${PORT_TO_EXPOSE}:8080
+      - '8282:8080'
     volumes:
-      - ${DIR_TO_DOWNLOAD}:/youtube-dl
+      - /media/external/YouTube:/youtube-dl
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - TZ=Asia/Seoul
+      - TZ=${TZ}
       - YTBDL_O=%(title)s - [%(id)s].%(ext)s
       - YTBDL_F=bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=ytdl"
+      - "traefik.frontend.rule=Host:"
+      - "traefik.port=8080"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+
 ```
 
 Create and run your container as above, and then access to ```http://${DOCKER_HOST_IP}:${PORT_TO_EXPOSE}/youtube-dl```
@@ -52,7 +68,3 @@ Create and run your container as above, and then access to ```http://${DOCKER_HO
 | ```YTBDL_SERVER_HOST```  |   | ```0.0.0.0```
 | ```YTBDL_SERVER_PORT```  |   | ```8080```
 | ```YTBDL_SERVER_ROOT```  | http server root path  | ```/youtube-dl```
-
-## TODO
-
-- Support http basic auth
